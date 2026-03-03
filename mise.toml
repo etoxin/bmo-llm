@@ -8,23 +8,41 @@ cat Modelfile.template > build/Modelfile
 # 2. Open the SYSTEM block
 echo '\nSYSTEM \"\"\"' >> build/Modelfile
 
-# 3. Inject all parts of the brain
+# 3. Inject Core Personality & Logic
 cat src/personality.txt >> build/Modelfile
-echo '\n--- MEMORIES ---\n' >> build/Modelfile
-cat src/memories.txt >> build/Modelfile
-echo '\n--- LOGIC ---\n' >> build/Modelfile
+echo '\n--- LOGIC & BEHAVIOR ---\n' >> build/Modelfile
 cat src/logic.txt >> build/Modelfile
 
-# 4. Close the SYSTEM block
+# 4. Inject General Memories
+echo '\n--- GENERAL MEMORIES ---\n' >> build/Modelfile
+cat src/memories.txt >> build/Modelfile
+
+# 5. Loop through all Transcripts
+echo '\n### DETAILED EPISODE TRANSCRIPTS ###\n' >> build/Modelfile
+for file in src/transcripts/*.txt; do
+    echo "Processing memories from: $file"
+    echo "\n[EPISODE ARCHIVE: $(basename "$file" .txt)]\n" >> build/Modelfile
+    cat "$file" >> build/Modelfile
+    echo '\n' >> build/Modelfile
+done
+
+# 6. Close the SYSTEM block
 echo '\"\"\"' >> build/Modelfile
 
-# 5. Create the model
+# 7. Create the model
 ollama create bmo -f build/Modelfile
 """
-sources = ["Modelfile.template", "src/*.txt"]
+# Mise will now rebuild if any file in src/ or src/transcripts/ changes
+sources = ["Modelfile.template", "src/**/*.txt"]
 outputs = ["build/Modelfile"]
 
 [tasks.bmo]
 alias = "r"
 description = "Start the standalone BMO"
 run = "ollama run bmo"
+
+[tasks.test]
+description = "Check BMO's memory of the transcripts"
+run = """
+echo "BMO, who is Football and what did you do in the bathroom?" | ollama run bmo
+"""

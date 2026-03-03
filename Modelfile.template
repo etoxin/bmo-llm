@@ -1,9 +1,15 @@
 FROM gemma3:4b
 
-# Hardware optimizations for Jetson Orin Nano
-PARAMETER temperature 0.9
-PARAMETER num_ctx 32000
-PARAMETER stop "USER:"
-PARAMETER stop "ASSISTANT:"
+PARAMETER temperature 1.1
+PARAMETER repeat_penalty 1.4
+PARAMETER stop "<|im_start|>"
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "user"
+PARAMETER stop "assistant"
 
-# The Mise task will append the SYSTEM block and all text files here.
+TEMPLATE """<|im_start|>system
+{{ .System }}<|im_end|>
+<|im_start|>user
+{{ .Prompt }}<|im_end|>
+<|im_start|>assistant
+BMO: """
