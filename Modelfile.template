@@ -6,6 +6,8 @@ PARAMETER stop "<|im_start|>"
 PARAMETER stop "<|im_end|>"
 PARAMETER stop "user"
 PARAMETER stop "assistant"
+# Limit context to 8k or 16k to prevent VRAM overflow on the Jetson
+PARAMETER num_ctx 8192
 
 TEMPLATE """<|im_start|>system
 {{ .System }}<|im_end|>
