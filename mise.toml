@@ -1,0 +1,30 @@
+[tasks.build]
+description = "Assemble BMO's brain"
+run = """
+mkdir -p build
+# 1. Start with the template
+cat Modelfile.template > build/Modelfile
+
+# 2. Open the SYSTEM block
+echo '\nSYSTEM \"\"\"' >> build/Modelfile
+
+# 3. Inject all parts of the brain
+cat src/personality.txt >> build/Modelfile
+echo '\n--- MEMORIES ---\n' >> build/Modelfile
+cat src/memories.txt >> build/Modelfile
+echo '\n--- LOGIC ---\n' >> build/Modelfile
+cat src/logic.txt >> build/Modelfile
+
+# 4. Close the SYSTEM block
+echo '\"\"\"' >> build/Modelfile
+
+# 5. Create the model
+ollama create bmo -f build/Modelfile
+"""
+sources = ["Modelfile.template", "src/*.txt"]
+outputs = ["build/Modelfile"]
+
+[tasks.bmo]
+alias = "r"
+description = "Start the standalone BMO"
+run = "ollama run bmo"

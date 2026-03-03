@@ -1,0 +1,9 @@
+FROM gemma3:4b
+
+# Hardware optimizations for Jetson Orin Nano
+PARAMETER temperature 0.9
+PARAMETER num_ctx 32000
+PARAMETER stop "USER:"
+PARAMETER stop "ASSISTANT:"
+
+# The Mise task will append the SYSTEM block and all text files here.
